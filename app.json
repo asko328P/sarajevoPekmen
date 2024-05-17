@@ -29,12 +29,21 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.sarajevoPekmen"
+      "bundleIdentifier": "com.asko328.sarajevoPekmen"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
+      },
+      "package": "com.asko328.sarajevoPekmen"
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "a7a64882-fb49-459b-9ba7-97c3885cc645"
       }
     }
   }

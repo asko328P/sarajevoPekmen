@@ -4,12 +4,10 @@ import { GameEngine } from 'react-native-game-engine-skia';
 import { MoveFinger } from '~/game/systems/MoveFinger';
 import { Finger } from '~/game/renderers/Finger';
 import MapRenderer from '~/game/renderers/MapRenderer';
-import { generateMapEntities } from '~/game/entities/mapEntities';
+import { generateMapEntities, generateMapEntitiesForRender } from '~/game/entities/mapEntities';
 import { generatePlayerEntity } from '~/game/entities/playerEntity';
 import { LineOnScreen } from '~/game/systems/LineOnScreen';
 import { MovePlayer } from '~/game/systems/MovePlayer';
-import { from } from 'rxjs';
-import { Text } from 'react-native';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -36,6 +34,7 @@ export default function Home() {
         // 5: { position: [280, 200], renderer: <Finger /> },
         ...generateMapEntities(),
         ...generatePlayerEntity(),
+        ...generateMapEntitiesForRender(),
       }}></GameEngine>
   );
 }

@@ -1,5 +1,11 @@
-const MovePlayer = (entities, infoObj) => {
-  entities['player'].position = [entities['player'].position[0] + 0.0001, entities['player'].position[1]];
+const PLAYER_SPEED = 1 / 1000000;
+
+const MovePlayer = (entities: any, infoObj: any) => {
+  let playerEntity = entities['player'];
+  playerEntity.position = [
+    playerEntity.position[0] - PLAYER_SPEED * infoObj.time.delta,
+    playerEntity.position[1] - PLAYER_SPEED * infoObj.time.delta,
+  ];
   return entities;
 };
 
