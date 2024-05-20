@@ -10,7 +10,8 @@ const generatePlayerEntity = () => {
     position: [18.3398846, 43.8354825],
     nextPosition: [18.3397419, 43.8354548],
     previousPosition: [18.3395571, 43.8354122],
-    zoomLevel: 45000,
+    desiredMovementAngle: 50,
+    zoomLevel: 95000,
     renderer: <PlayerRenderer />,
   };
   return playerEntityObject;

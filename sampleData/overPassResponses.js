@@ -7086,6 +7086,8 @@ const lines = {
 let readyLines = [];
 lines.features.forEach((currentFeature) => {
   if (currentFeature.geometry.type === 'LineString') {
+    // readyLines.push(currentFeature.geometry.coordinates);
+
     readyLines.push(simplify(currentFeature.geometry.coordinates, 0.000002, true));
   }
 });

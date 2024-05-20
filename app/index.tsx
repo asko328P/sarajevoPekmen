@@ -25,10 +25,10 @@ export default function Home() {
         // 3: { position: [160, 200], renderer: <Finger /> }, //-- is supplied with the entity - it won't get displayed.
         // 4: { position: [220, 200], renderer: <Finger /> },
         // 5: { position: [280, 200], renderer: <Finger /> },
+        ...generatePlayerEntity(),
         ...generateMapEntities(),
         ...generateMapEntitiesForRender(),
         ...generateConnectedPoints(),
-        ...generatePlayerEntity(),
       }}
     />
   );

@@ -1,8 +1,11 @@
-const PLAYER_SPEED = 5 / 10000000;
+import { angleDifference, calcAngleDegrees } from '~/utility/geometry';
+
+const PLAYER_SPEED = 40 / 10000000;
 const EPSILON = 1 / 100000;
 
 const MovePlayer = (entities: any, infoObj: any) => {
   let playerEntity = entities['player'];
+  const desiredMovementAngle = playerEntity.desiredMovementAngle;
   const position = playerEntity.position;
   const nextPosition = playerEntity.nextPosition;
   const previousPosition = playerEntity.previousPosition;
@@ -16,17 +19,28 @@ const MovePlayer = (entities: any, infoObj: any) => {
     playerEntity.position = nextPosition;
     playerEntity.previousPosition = nextPosition;
     if (entities[nextPosition.toString()] === undefined) {
-      console.log('nema validnih, returnam se');
+      console.log('No valids, returning');
       playerEntity.nextPosition = previousPosition;
       return entities;
     }
-    console.log(
-      'prijelaz\n pozicija je: ',
-      nextPosition.toString(),
-      '\n entities[nextPosition.toString()]: \n',
-      entities[nextPosition.toString()]
-    );
-    playerEntity.nextPosition = entities[nextPosition.toString()].connectedPoints.values().next().value;
+    let pointClosestToDesiredAngle = entities[nextPosition.toString()].connectedPoints.values().next().value;
+    let closestToDesiredAngle = 360;
+    entities[nextPosition.toString()].connectedPoints.forEach((value: any, key: string) => {
+      let tempAngle = angleDifference(
+        desiredMovementAngle,
+        calcAngleDegrees(
+          entities[nextPosition.toString()].connectedPoints.get(key)[0] - nextPosition[0],
+          entities[nextPosition.toString()].connectedPoints.get(key)[1] - nextPosition[1]
+        )
+      );
+      if (tempAngle < closestToDesiredAngle) {
+        pointClosestToDesiredAngle = entities[nextPosition.toString()].connectedPoints.get(key);
+        closestToDesiredAngle = tempAngle;
+      }
+    });
+    playerEntity.position = nextPosition;
+    playerEntity.nextPosition = pointClosestToDesiredAngle;
+
     return entities;
   }
   playerEntity.position = [
