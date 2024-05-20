@@ -16,6 +16,7 @@ class MapRenderer extends PureComponent {
       return;
     }
     const lineOnScreen = this.props.allLines;
+    //Generate SVG which is to be rendered,
     let path = '';
     lineOnScreen.forEach((lineArray: any) => {
       path += ' M';
@@ -24,20 +25,9 @@ class MapRenderer extends PureComponent {
       });
       path = path.substring(0, path.length - 2);
     });
-    // if (points.length < 3) {
-    //   return;
-    // }
+
     path = path.substring(0, path.length - 2);
     return <Path path={path} color="lightblue" style="stroke" strokeJoin={'round'} strokeWidth={4} />;
-
-    // return lineOnScreen.map((coordinate: [number, number], index: number, array: [[number, number]]) => {
-    //   if (index === 0) {
-    //     return;
-    //   }
-    //   const p1vec = vec(coordinate[0], coordinate[1]);
-    //   const p2vec = vec(array[index - 1][0], array[index - 1][1]);
-    //   return <Line key={`line${coordinate[0]}${myOwnPos[0]}${index}`} p1={p1vec} p2={p2vec} color={'blue'} strokeWidth={10} />;
-    // });
   }
 }
 

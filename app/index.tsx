@@ -4,20 +4,13 @@ import { GameEngine } from 'react-native-game-engine-skia';
 import { MoveFinger } from '~/game/systems/MoveFinger';
 import { Finger } from '~/game/renderers/Finger';
 import MapRenderer from '~/game/renderers/MapRenderer';
-import { generateMapEntities, generateMapEntitiesForRender } from '~/game/entities/mapEntities';
+import { generateConnectedPoints, generateMapEntities, generateMapEntitiesForRender } from '~/game/entities/mapEntities';
 import { generatePlayerEntity } from '~/game/entities/playerEntity';
 import { LineOnScreen } from '~/game/systems/LineOnScreen';
 import { MovePlayer } from '~/game/systems/MovePlayer';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
-
-const currentLocationAndZoom = {
-  lat: 18.3399497,
-  lon: 43.8383515,
-  zoom: 22000,
-};
-const lineData = lines.features;
 
 export default function Home() {
   // return <Text>asdas</Text>;
@@ -33,9 +26,11 @@ export default function Home() {
         // 4: { position: [220, 200], renderer: <Finger /> },
         // 5: { position: [280, 200], renderer: <Finger /> },
         ...generateMapEntities(),
-        ...generatePlayerEntity(),
         ...generateMapEntitiesForRender(),
-      }}></GameEngine>
+        ...generateConnectedPoints(),
+        ...generatePlayerEntity(),
+      }}
+    />
   );
 }
 
