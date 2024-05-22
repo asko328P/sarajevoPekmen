@@ -8,6 +8,7 @@ import { generateConnectedPoints, generateMapEntities, generateMapEntitiesForRen
 import { generatePlayerEntity } from '~/game/entities/playerEntity';
 import { LineOnScreen } from '~/game/systems/LineOnScreen';
 import { MovePlayer } from '~/game/systems/MovePlayer';
+import { PlayerControl } from '~/game/systems/PlayerControl';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -17,7 +18,7 @@ export default function Home() {
   return (
     <GameEngine
       style={styles.container}
-      systems={[MoveFinger, LineOnScreen(windowWidth, windowHeight), MovePlayer]}
+      systems={[LineOnScreen(windowWidth, windowHeight), MovePlayer, PlayerControl(windowWidth, windowHeight)]}
       entities={{
         // 0: { lineData, renderer: <MapRenderer /> },
         // 1: { position: [40, 200], renderer: <Finger /> }, //-- Notice that each entity has a unique id (required)
@@ -25,10 +26,10 @@ export default function Home() {
         // 3: { position: [160, 200], renderer: <Finger /> }, //-- is supplied with the entity - it won't get displayed.
         // 4: { position: [220, 200], renderer: <Finger /> },
         // 5: { position: [280, 200], renderer: <Finger /> },
-        ...generatePlayerEntity(),
         ...generateMapEntities(),
         ...generateMapEntitiesForRender(),
         ...generateConnectedPoints(),
+        ...generatePlayerEntity(),
       }}
     />
   );
