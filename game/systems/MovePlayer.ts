@@ -43,7 +43,7 @@ const MovePlayer = (entities: any, infoObj: any) => {
       let tempAngle = angleDifference(
         desiredMovementAngle,
         calcAngleDegrees(
-          entities[nextPosition.toString()].connectedPoints.get(key)[0] - nextPosition[0],
+          ((entities[nextPosition.toString()].connectedPoints.get(key)[0] - nextPosition[0]) * Math.PI) / 2.35,
           entities[nextPosition.toString()].connectedPoints.get(key)[1] - nextPosition[1]
         )
       );
