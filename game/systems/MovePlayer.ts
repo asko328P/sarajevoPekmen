@@ -12,8 +12,8 @@ const MovePlayer = (entities: any, infoObj: any) => {
 
   const currentMovementAngle = calcAngleDegrees(nextPosition[0] - position[0], nextPosition[1] - position[1]);
 
-  console.log(`currentMovementAngle ${currentMovementAngle};  desiredMovementAngle ${desiredMovementAngle}`);
-  console.log(angleDifference(desiredMovementAngle, currentMovementAngle));
+  // console.log(`currentMovementAngle ${currentMovementAngle};  desiredMovementAngle ${desiredMovementAngle}`);
+  // console.log(angleDifference(desiredMovementAngle, currentMovementAngle));
   if (angleDifference(desiredMovementAngle, currentMovementAngle) > 90 && currentMovementAngle !== 0) {
     playerEntity.nextPosition = previousPosition;
     playerEntity.previousPosition = nextPosition;
@@ -31,7 +31,7 @@ const MovePlayer = (entities: any, infoObj: any) => {
     playerEntity.previousPosition = nextPosition;
     //the following should not occur
     if (entities[nextPosition.toString()] === undefined) {
-      console.log('No valids, returning');
+      // console.log('No valids, returning');
       playerEntity.nextPosition = previousPosition;
       return entities;
     }

@@ -12,4 +12,9 @@ function degreesToRadians(degrees: number) {
   return degrees * (pi / 180);
 }
 
-export { calcAngleDegrees, angleDifference, degreesToRadians };
+function radiansToDegreess(radians: number) {
+  var pi = Math.PI;
+  return radians * (180 / pi);
+}
+
+export { calcAngleDegrees, angleDifference, degreesToRadians, radiansToDegreess };

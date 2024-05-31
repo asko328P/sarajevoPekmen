@@ -1,4 +1,5 @@
 import simplify from 'simplify-js';
+import { degreesToRadians, radiansToDegreess } from '~/utility/geometry';
 
 const nodes = [
   {
@@ -7084,10 +7085,33 @@ const lines = {
   ],
 };
 let readyLines = [];
+const SOME_ROUND_NUMBER = 100000;
 lines.features.forEach((currentFeature) => {
   if (currentFeature.geometry.type === 'LineString') {
-    readyLines.push(currentFeature.geometry.coordinates);
-
+    let tempLine = [];
+    currentFeature.geometry.coordinates.forEach((point) => {
+      const gamma = point[0];
+      const phiRadians = degreesToRadians(point[1]);
+      const phiMercator = Math.log(Math.abs(1 / Math.cos(phiRadians) + Math.tan(phiRadians)));
+      tempLine.push([gamma, radiansToDegreess(phiMercator)]);
+    });
+    // if (tempLine.length > 5) {
+    //   const firstTempElement = tempLine[0];
+    //   const lastTempElement = tempLine[tempLine.length - 1];
+    //   tempLine.pop();
+    //   tempLine.shift();
+    //   tempLine = simplify(tempLine, 0.000002, false);
+    //   tempLine.unshift(firstTempElement);
+    //   tempLine.push(lastTempElement);
+    // }
+    // tempLine = tempLine.map((point) => {
+    //   return [
+    //     Math.round(point[0] * SOME_ROUND_NUMBER) / SOME_ROUND_NUMBER,
+    //     Math.round(point[1] * SOME_ROUND_NUMBER) / SOME_ROUND_NUMBER,
+    //   ];
+    // });
+    console.log(tempLine);
+    readyLines.push(tempLine);
     // readyLines.push(simplify(currentFeature.geometry.coordinates, 0.000002, true));
   }
 });

@@ -18,7 +18,8 @@ const LineOnScreen = (windowWidth: number, windowHeight: number) => (entities: a
     entity.line.forEach((line: [number, number]) => {
       tempLineOnScreen.push([
         (line[0] - playerEntity.position[0]) * playerEntity.zoomLevel + windowWidth / 2,
-        ((line[1] - playerEntity.position[1]) * -playerEntity.zoomLevel * Math.PI) / 2.35 + windowHeight / 2,
+        (line[1] - playerEntity.position[1]) * -playerEntity.zoomLevel + windowHeight / 2,
+        // ((line[1] - playerEntity.position[1]) * -playerEntity.zoomLevel * Math.PI) / 2.35 + windowHeight / 2,
       ]);
     });
     allLinesEntity.allLines.push(tempLineOnScreen);

@@ -1,9 +1,5 @@
 import { Circle, Line, Path, Points, vec, Group } from '@shopify/react-native-skia';
 import React, { PureComponent } from 'react';
-import { Dimensions, StyleSheet, View } from 'react-native';
-import { number } from 'prop-types';
-
-const RADIUS = 20;
 
 interface geometry {
   type: string;
