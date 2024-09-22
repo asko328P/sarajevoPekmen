@@ -7085,7 +7085,6 @@ const lines = {
   ],
 };
 let readyLines = [];
-const SOME_ROUND_NUMBER = 100000;
 lines.features.forEach((currentFeature) => {
   if (currentFeature.geometry.type === 'LineString') {
     let tempLine = [];

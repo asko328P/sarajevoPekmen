@@ -9,28 +9,44 @@ import { generatePlayerEntity } from '~/game/entities/playerEntity';
 import { LineOnScreen } from '~/game/systems/LineOnScreen';
 import { MovePlayer } from '~/game/systems/MovePlayer';
 import { PlayerControl } from '~/game/systems/PlayerControl';
+import { useEffect, useRef, useState } from 'react';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 export default function Home() {
   // return <Text>asdas</Text>;
+  const gameEngineRef = useRef<GameEngine>(null);
+  const [position, setPosition] = useState();
+
+  useEffect(() => {
+    gameEngineRef.current?.swap({
+      ...generateMapEntities(),
+      ...generateMapEntitiesForRender(),
+      ...generateConnectedPoints(),
+      ...generatePlayerEntity(),
+    });
+  }, []);
+
   return (
     <GameEngine
+      ref={gameEngineRef}
       style={styles.container}
       systems={[LineOnScreen(windowWidth, windowHeight), MovePlayer, PlayerControl(windowWidth, windowHeight)]}
-      entities={{
-        // 0: { lineData, renderer: <MapRenderer /> },
-        // 1: { position: [40, 200], renderer: <Finger /> }, //-- Notice that each entity has a unique id (required)
-        // 2: { position: [100, 200], renderer: <Finger /> }, //-- and a renderer property (optional). If no renderer
-        // 3: { position: [160, 200], renderer: <Finger /> }, //-- is supplied with the entity - it won't get displayed.
-        // 4: { position: [220, 200], renderer: <Finger /> },
-        // 5: { position: [280, 200], renderer: <Finger /> },
-        ...generateMapEntities(),
-        ...generateMapEntitiesForRender(),
-        ...generateConnectedPoints(),
-        ...generatePlayerEntity(),
-      }}
+      entities={
+        {
+          // 0: { lineData, renderer: <MapRenderer /> },
+          // 1: { position: [40, 200], renderer: <Finger /> }, //-- Notice that each entity has a unique id (required)
+          // 2: { position: [100, 200], renderer: <Finger /> }, //-- and a renderer property (optional). If no renderer
+          // 3: { position: [160, 200], renderer: <Finger /> }, //-- is supplied with the entity - it won't get displayed.
+          // 4: { position: [220, 200], renderer: <Finger /> },
+          // 5: { position: [280, 200], renderer: <Finger /> },
+          // ...generateMapEntities(),
+          // ...generateMapEntitiesForRender(),
+          // ...generateConnectedPoints(),
+          // ...generatePlayerEntity(),
+        }
+      }
     />
   );
 }
