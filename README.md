@@ -1,9 +1,11 @@
 # sarajevoPekmen
 
 A small game inspired by the cult classic Pacman, set in Sarajevo. The player is able to use the real road network to
-traverse the world
+traverse the world, while the game fetches new roads on the fly. It uses actual map data provided and mantained by the OpenStreetMap community.
 
 ## Demo
+
+https://github.com/user-attachments/assets/3a72e653-0c17-4799-b08b-6799608a3114
 
 ### Technologies Used
 
