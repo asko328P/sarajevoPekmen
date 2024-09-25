@@ -13,7 +13,6 @@ export const DistanceChecker = (entities: any, infoObj: any) => {
   if (getDistance(position[1], position[0], startingPosition[1], startingPosition[0]) > DELTA / 2.5) {
     playerEntity.startingPosition = position;
     let latRadian = degreesToRadians(position[1]);
-    // latRadian = Math.log(Math.abs(1 / Math.cos(latRadian) + Math.tan(latRadian))) / Math.log(10);
     latRadian = Math.acos((2 * Math.pow(Math.E, latRadian)) / (Math.pow(Math.E, 2 * latRadian) + 1));
     let latDegree = radiansToDegrees(latRadian);
 

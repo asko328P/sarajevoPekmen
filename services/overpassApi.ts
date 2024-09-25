@@ -1,7 +1,6 @@
 import osmtogeojson from 'osmtogeojson';
-import { GeoJSON } from 'geojson';
+
 import { degreesToRadians, radiansToDegrees } from '~/utility/geometry';
-import { readyLines } from '~/sampleData/overPassResponses';
 
 export const DELTA = 0.011;
 
@@ -63,10 +62,10 @@ export type GeoJSONData = {
   features: Feature[];
 };
 
-export type Point = Array<number>;
-export type Way = Array<Point>;
+export type Point = number[];
+export type Way = Point[];
 
-export type ReadyLines = Array<Way>;
+export type ReadyLines = Way[];
 
 export const convertMapData = (data: GeoJSONData) => {
   let tempData: ReadyLines = [];
@@ -80,7 +79,6 @@ export const convertMapData = (data: GeoJSONData) => {
         tempLine.push([gamma, radiansToDegrees(phiMercator)]);
       });
       tempData.push(tempLine);
-      // readyLines.push(simplify(currentFeature.geometry.coordinates, 0.000002, true));
     }
   });
   return tempData;
