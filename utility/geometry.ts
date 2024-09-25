@@ -12,9 +12,13 @@ function degreesToRadians(degrees: number) {
   return degrees * (pi / 180);
 }
 
-function radiansToDegreess(radians: number) {
+function radiansToDegrees(radians: number) {
   var pi = Math.PI;
   return radians * (180 / pi);
 }
 
-export { calcAngleDegrees, angleDifference, degreesToRadians, radiansToDegreess };
+function getDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
+  return Math.sqrt((lat1 - lat2) * (lat1 - lat2) + (lon1 - lon2) * (lon1 - lon2));
+}
+
+export { calcAngleDegrees, angleDifference, degreesToRadians, radiansToDegrees, getDistance };

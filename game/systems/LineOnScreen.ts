@@ -1,4 +1,7 @@
 const LineOnScreen = (windowWidth: number, windowHeight: number) => (entities: any) => {
+  if (!entities || !entities?.player) {
+    return entities;
+  }
   const playerEntity = entities['player'];
   const allLinesEntity = entities['allLines'];
 

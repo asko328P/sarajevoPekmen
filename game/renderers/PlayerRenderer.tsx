@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { PureComponent } from 'react';
 import { Circle, Group, vec, Vertices } from '@shopify/react-native-skia';
 import { Dimensions } from 'react-native';
