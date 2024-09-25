@@ -18,10 +18,8 @@ type Event = {
   playerEntity?: any;
 };
 export default function Home() {
-  // return <Text>asdas</Text>;
   const gameEngineRef = useRef<GameEngine>(null);
-  const [position, setPosition] = useState([43.8344772, 18.3426325]);
-  const firstRender = useRef(true);
+  const [position, setPosition] = useState([43.859029, 18.4340605]);
 
   useEffect(() => {
     const generateMapData = async () => {
@@ -39,45 +37,25 @@ export default function Home() {
     };
 
     generateMapData();
-  }, [position]);
-  // useEffect(() => {
-  //   if (firstRender.current) {
-  //     firstRender.current = false;
-  //     return;
-  //   }
-  //   const generateMapData = async () => {
-  //     const mapEntities = await getConvertedMapData(position[0], position[1]);
-  //     const cumulativeEntities = generateCumulativeEntities(mapEntities);
-  //
-  //     gameEngineRef.current?.swap({
-  //       ...cumulativeEntities,
-  //     });
-  //   };
-  //
-  //   generateMapData();
-  // }, [position]);
+  }, []);
 
   const onEventCallback = async (event: Event) => {
     console.log(event.newPosition);
     switch (event.type) {
       case 'newPosition':
-        // setPosition(event.newPosition);
         gameEngineRef.current?.stop();
         if (!event.newPosition) {
           break;
         }
         const mapEntities = await getConvertedMapData(event.newPosition[0], event.newPosition[1]);
         const cumulativeEntities = generateCumulativeEntities(mapEntities);
-        const playerEntity = generatePlayerEntityFromMapData(mapEntities, position[0], position[1]);
 
         const playerEntityObject: { [key: string]: any } = {};
         playerEntityObject['player'] = event.playerEntity;
 
         console.log(event.playerEntity);
         gameEngineRef?.current?.swap({
-          // ...event.playerEntity,
           ...cumulativeEntities,
-          // ...playerEntity,
           ...playerEntityObject,
         });
         gameEngineRef.current?.start();

@@ -15,8 +15,6 @@ const MovePlayer = (entities: any, infoObj: any) => {
 
   const currentMovementAngle = calcAngleDegrees(nextPosition[0] - position[0], nextPosition[1] - position[1]);
 
-  // console.log(`currentMovementAngle ${currentMovementAngle};  desiredMovementAngle ${desiredMovementAngle}`);
-  // console.log(angleDifference(desiredMovementAngle, currentMovementAngle));
   if (angleDifference(desiredMovementAngle, currentMovementAngle) > 90 && currentMovementAngle !== 0) {
     playerEntity.nextPosition = previousPosition;
     playerEntity.previousPosition = nextPosition;
@@ -38,7 +36,6 @@ const MovePlayer = (entities: any, infoObj: any) => {
       playerEntity.nextPosition = previousPosition;
       return entities;
     }
-    // console.log(entities[nextPosition.toString()].connectedPoints);
     let pointClosestToDesiredAngle = entities[nextPosition.toString()].connectedPoints.values().next().value;
     let closestToDesiredAngle = 360;
     //finding point which matches the desired movement angle best
