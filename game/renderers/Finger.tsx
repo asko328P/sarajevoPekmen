@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { Circle } from '@shopify/react-native-skia';
 import React, { PureComponent } from 'react';
 import { StyleSheet, View } from 'react-native';

@@ -1,14 +1,17 @@
 import { angleDifference, calcAngleDegrees } from '~/utility/geometry';
 
-const PLAYER_SPEED = 9 / 10000000;
 const EPSILON = 1 / 100000;
 
 const MovePlayer = (entities: any, infoObj: any) => {
-  let playerEntity = entities['player'];
+  if (!entities || !entities?.player) {
+    return entities;
+  }
+  let playerEntity = entities.player;
   const desiredMovementAngle = playerEntity.desiredMovementAngle;
   const position = playerEntity.position;
   const nextPosition = playerEntity.nextPosition;
   const previousPosition = playerEntity.previousPosition;
+  const playerSpeed = playerEntity.playerSpeed;
 
   const currentMovementAngle = calcAngleDegrees(nextPosition[0] - position[0], nextPosition[1] - position[1]);
 
@@ -25,7 +28,7 @@ const MovePlayer = (entities: any, infoObj: any) => {
   );
   //check if the next supposed point on the line would be outside the line,
   //if so, try to find next available point according to the desired movement angle
-  const distanceRatio = (PLAYER_SPEED / distanceBetweenPositions) * infoObj.time.delta;
+  const distanceRatio = (playerSpeed / distanceBetweenPositions) * infoObj.time.delta;
   if (distanceRatio < 0 || distanceRatio > 1 || distanceBetweenPositions < EPSILON) {
     playerEntity.position = nextPosition;
     playerEntity.previousPosition = nextPosition;

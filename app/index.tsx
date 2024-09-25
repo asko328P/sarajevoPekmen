@@ -1,52 +1,96 @@
-import { lines } from '~/sampleData/overPassResponses';
 import { Dimensions, View } from 'react-native';
+//@ts-ignore
 import { GameEngine } from 'react-native-game-engine-skia';
-import { MoveFinger } from '~/game/systems/MoveFinger';
-import { Finger } from '~/game/renderers/Finger';
-import MapRenderer from '~/game/renderers/MapRenderer';
-import { generateConnectedPoints, generateMapEntities, generateMapEntitiesForRender } from '~/game/entities/mapEntities';
-import { generatePlayerEntity } from '~/game/entities/playerEntity';
 import { LineOnScreen } from '~/game/systems/LineOnScreen';
 import { MovePlayer } from '~/game/systems/MovePlayer';
 import { PlayerControl } from '~/game/systems/PlayerControl';
 import { useEffect, useRef, useState } from 'react';
+import { getConvertedMapData, getMapData } from '~/services/overpassApi';
+import { generateCumulativeEntities, generatePlayerEntityFromMapData } from '~/game/entities/entitiesGenerators';
+import { DistanceChecker } from '~/game/systems/DistanceChecker';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
+type Event = {
+  type: 'newPosition';
+  newPosition?: number[];
+  playerEntity?: any;
+};
 export default function Home() {
   // return <Text>asdas</Text>;
   const gameEngineRef = useRef<GameEngine>(null);
-  const [position, setPosition] = useState();
+  const [position, setPosition] = useState([43.8344772, 18.3426325]);
+  const firstRender = useRef(true);
 
   useEffect(() => {
-    gameEngineRef.current?.swap({
-      ...generateMapEntities(),
-      ...generateMapEntitiesForRender(),
-      ...generateConnectedPoints(),
-      ...generatePlayerEntity(),
-    });
-  }, []);
+    const generateMapData = async () => {
+      console.log('generating map data');
+      gameEngineRef.current?.stop();
+      const mapEntities = await getConvertedMapData(position[0], position[1]);
+      const cumulativeEntities = generateCumulativeEntities(mapEntities);
+      const playerEntity = generatePlayerEntityFromMapData(mapEntities, position[0], position[1]);
+      gameEngineRef.current?.start();
 
+      gameEngineRef.current?.swap({
+        ...cumulativeEntities,
+        ...playerEntity,
+      });
+    };
+
+    generateMapData();
+  }, [position]);
+  // useEffect(() => {
+  //   if (firstRender.current) {
+  //     firstRender.current = false;
+  //     return;
+  //   }
+  //   const generateMapData = async () => {
+  //     const mapEntities = await getConvertedMapData(position[0], position[1]);
+  //     const cumulativeEntities = generateCumulativeEntities(mapEntities);
+  //
+  //     gameEngineRef.current?.swap({
+  //       ...cumulativeEntities,
+  //     });
+  //   };
+  //
+  //   generateMapData();
+  // }, [position]);
+
+  const onEventCallback = async (event: Event) => {
+    console.log(event.newPosition);
+    switch (event.type) {
+      case 'newPosition':
+        // setPosition(event.newPosition);
+        gameEngineRef.current?.stop();
+        if (!event.newPosition) {
+          break;
+        }
+        const mapEntities = await getConvertedMapData(event.newPosition[0], event.newPosition[1]);
+        const cumulativeEntities = generateCumulativeEntities(mapEntities);
+        const playerEntity = generatePlayerEntityFromMapData(mapEntities, position[0], position[1]);
+
+        const playerEntityObject: { [key: string]: any } = {};
+        playerEntityObject['player'] = event.playerEntity;
+
+        console.log(event.playerEntity);
+        gameEngineRef?.current?.swap({
+          // ...event.playerEntity,
+          ...cumulativeEntities,
+          // ...playerEntity,
+          ...playerEntityObject,
+        });
+        gameEngineRef.current?.start();
+        break;
+    }
+  };
   return (
     <GameEngine
       ref={gameEngineRef}
       style={styles.container}
-      systems={[LineOnScreen(windowWidth, windowHeight), MovePlayer, PlayerControl(windowWidth, windowHeight)]}
-      entities={
-        {
-          // 0: { lineData, renderer: <MapRenderer /> },
-          // 1: { position: [40, 200], renderer: <Finger /> }, //-- Notice that each entity has a unique id (required)
-          // 2: { position: [100, 200], renderer: <Finger /> }, //-- and a renderer property (optional). If no renderer
-          // 3: { position: [160, 200], renderer: <Finger /> }, //-- is supplied with the entity - it won't get displayed.
-          // 4: { position: [220, 200], renderer: <Finger /> },
-          // 5: { position: [280, 200], renderer: <Finger /> },
-          // ...generateMapEntities(),
-          // ...generateMapEntitiesForRender(),
-          // ...generateConnectedPoints(),
-          // ...generatePlayerEntity(),
-        }
-      }
+      onEvent={onEventCallback}
+      systems={[LineOnScreen(windowWidth, windowHeight), MovePlayer, PlayerControl(windowWidth, windowHeight), DistanceChecker]}
+      entities={{}}
     />
   );
 }

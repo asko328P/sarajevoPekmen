@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { Circle, Line, Path, Points, vec, Group } from '@shopify/react-native-skia';
 import React, { PureComponent } from 'react';
 
@@ -25,8 +26,8 @@ class MapRenderer extends PureComponent {
     path = path.substring(0, path.length - 2);
     return (
       <Group>
-        <Path path={path} color="blue" style="stroke" strokeJoin={'round'} strokeWidth={20} />
-        <Path path={path} color="black" style="stroke" strokeJoin={'round'} strokeWidth={15} />
+        <Path path={path} color="blue" style="stroke" strokeJoin={'round'} strokeWidth={10} />
+        <Path path={path} color="black" style="stroke" strokeJoin={'round'} strokeWidth={5} />
       </Group>
     );
     // return <Path path={path} color="lightblue" style="stroke" strokeJoin={'round'} strokeWidth={4} />;
