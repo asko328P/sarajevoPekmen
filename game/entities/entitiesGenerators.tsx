@@ -20,7 +20,7 @@ const generateMapEntitiesForRender = (mapData: ReadyLines) => {
   return mapEntities;
 };
 
-const generateConnectedPoints = (mapData: ReadyLines) => {
+export const generateConnectedPoints = (mapData: ReadyLines) => {
   const mapEntities: { [key: string]: any } = {};
   mapData.forEach((line) => {
     line.forEach((point: any, index: number, array: any) => {
@@ -86,8 +86,8 @@ export const generatePlayerEntityFromMapData = (
   lat: number,
   long: number,
   desiredMovementAngle = 62,
-  zoomLevel = 150000,
-  playerSpeed = 5 / 10000000
+  zoomLevel = 180000,
+  playerSpeed = 3 / 10000000
 ) => {
   const playerEntityObject: { [key: string]: any } = {};
 

@@ -1,3 +1,5 @@
+import simplify from 'simplify-js';
+
 const LineOnScreen = (windowWidth: number, windowHeight: number) => (entities: any) => {
   if (!entities || !entities?.player) {
     return entities;
@@ -15,10 +17,10 @@ const LineOnScreen = (windowWidth: number, windowHeight: number) => (entities: a
       return;
     }
     let tempLineOnScreen: number[][] = [];
-    entity.line.forEach((line: [number, number]) => {
+    simplify(entity.line, 0.00004, false).forEach((point: [number, number]) => {
       tempLineOnScreen.push([
-        (line[0] - playerEntity.position[0]) * playerEntity.zoomLevel + windowWidth / 2,
-        (line[1] - playerEntity.position[1]) * -playerEntity.zoomLevel + windowHeight / 2,
+        (point[0] - playerEntity.position[0]) * playerEntity.zoomLevel + windowWidth / 2,
+        (point[1] - playerEntity.position[1]) * -playerEntity.zoomLevel + windowHeight / 2,
       ]);
     });
     allLinesEntity.allLines.push(tempLineOnScreen);
