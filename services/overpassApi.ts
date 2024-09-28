@@ -2,7 +2,7 @@ import osmtogeojson from 'osmtogeojson';
 
 import { degreesToRadians, radiansToDegrees } from '~/utility/geometry';
 
-export const DELTA = 0.011;
+export const DELTA = 0.013;
 
 const fetchMapData = (lat: number, long: number, delta = DELTA) => {
   const latMin = lat - delta / 2;
@@ -17,10 +17,7 @@ const fetchMapData = (lat: number, long: number, delta = DELTA) => {
   way["highway"="primary"](${latMin},${longMin},${latMax},${longMax});
   way["highway"="secondary"](${latMin},${longMin},${latMax},${longMax});
   way["highway"="trunk"](${latMin},${longMin},${latMax},${longMax});
-  way["highway"="primary"](${latMin},${longMin},${latMax},${longMax});
-  way["highway"="secondary"](${latMin},${longMin},${latMax},${longMax});
   way["highway"="tertiary"](${latMin},${longMin},${latMax},${longMax});
-  way["highway"="secondary"](${latMin},${longMin},${latMax},${longMax});
   way["highway"="residential"](${latMin},${longMin},${latMax},${longMax});
   way["highway"="service"](${latMin},${longMin},${latMax},${longMax});
   way["highway"="pedestrian"](${latMin},${longMin},${latMax},${longMax});

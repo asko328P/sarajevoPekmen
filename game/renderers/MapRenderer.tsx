@@ -1,5 +1,5 @@
 //@ts-nocheck
-import { Circle, Line, Path, Points, vec, Group } from '@shopify/react-native-skia';
+import { Circle, Line, Path, Points, vec, Group, DashPathEffect, CornerPathEffect } from '@shopify/react-native-skia';
 import React, { PureComponent } from 'react';
 
 interface geometry {
@@ -26,8 +26,16 @@ class MapRenderer extends PureComponent {
     path = path.substring(0, path.length - 2);
     return (
       <Group>
-        <Path path={path} color="blue" style="stroke" strokeJoin={'round'} strokeWidth={10} />
-        <Path path={path} color="black" style="stroke" strokeJoin={'round'} strokeWidth={5} />
+        <Path strokeCap={'round'} path={path} color="blue" style="stroke" strokeJoin={'round'} strokeWidth={25}>
+          <CornerPathEffect r={64} />
+        </Path>
+        <Path strokeCap={'round'} path={path} color="black" style="stroke" strokeJoin={'round'} strokeWidth={20}>
+          <CornerPathEffect r={64} />
+        </Path>
+        <Path path={path} color="white" style="stroke" strokeJoin={'round'} strokeWidth={1}>
+          <DashPathEffect intervals={[7, 10]} />
+          <CornerPathEffect r={64} />
+        </Path>
       </Group>
     );
     // return <Path path={path} color="lightblue" style="stroke" strokeJoin={'round'} strokeWidth={4} />;

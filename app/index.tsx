@@ -1,4 +1,4 @@
-import { Dimensions, View } from 'react-native';
+import { Dimensions, Text, View } from 'react-native';
 //@ts-ignore
 import { GameEngine } from 'react-native-game-engine-skia';
 import { LineOnScreen } from '~/game/systems/LineOnScreen';
@@ -20,6 +20,8 @@ type Event = {
 export default function Home() {
   const gameEngineRef = useRef<GameEngine>(null);
   const [position, setPosition] = useState([43.859029, 18.4340605]);
+  // const isAlreadyFetchingData = useRef(false);
+  const [isFetchingData, setIsFetchingData] = useState(false);
 
   useEffect(() => {
     const generateMapData = async () => {
@@ -40,40 +42,64 @@ export default function Home() {
   }, []);
 
   const onEventCallback = async (event: Event) => {
-    console.log(event.newPosition);
     switch (event.type) {
       case 'newPosition':
-        gameEngineRef.current?.stop();
+        // gameEngineRef.current?.stop();
         if (!event.newPosition) {
           break;
         }
+        if (isFetchingData) {
+          break;
+        }
+        setIsFetchingData(true);
+        console.log('fetching new position');
         const mapEntities = await getConvertedMapData(event.newPosition[0], event.newPosition[1]);
         const cumulativeEntities = generateCumulativeEntities(mapEntities);
 
         const playerEntityObject: { [key: string]: any } = {};
         playerEntityObject['player'] = event.playerEntity;
 
-        console.log(event.playerEntity);
         gameEngineRef?.current?.swap({
           ...cumulativeEntities,
           ...playerEntityObject,
         });
-        gameEngineRef.current?.start();
+        // isAlreadyFetchingData.current = false;
+        setIsFetchingData(false);
+        // gameEngineRef.current?.start();
         break;
     }
   };
   return (
-    <GameEngine
-      ref={gameEngineRef}
-      style={styles.container}
-      onEvent={onEventCallback}
-      systems={[LineOnScreen(windowWidth, windowHeight), MovePlayer, PlayerControl(windowWidth, windowHeight), DistanceChecker]}
-      entities={{}}
-    />
+    <View style={styles.container}>
+      <GameEngine
+        ref={gameEngineRef}
+        style={styles.gameEngine}
+        onEvent={onEventCallback}
+        systems={[LineOnScreen(windowWidth, windowHeight), MovePlayer, PlayerControl(windowWidth, windowHeight), DistanceChecker]}
+        entities={{}}
+      />
+      {isFetchingData && (
+        <View style={styles.textHolder}>
+          <Text style={styles.fetchingText}>{'Fetching map data.'}</Text>
+        </View>
+      )}
+    </View>
   );
 }
 
 const styles = {
+  fetchingText: {
+    color: 'white',
+    paddingBottom: 200,
+  },
+  textHolder: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+  },
+  gameEngine: {
+    position: 'absolute',
+  },
   container: {
     flex: 1,
   },
