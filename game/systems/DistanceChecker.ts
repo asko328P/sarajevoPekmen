@@ -1,7 +1,7 @@
 import { angleDifference, calcAngleDegrees, degreesToRadians, getDistance, radiansToDegrees } from '~/utility/geometry';
 import { DELTA } from '~/services/overpassApi';
 
-const EPSILON = 0.001;
+// const EPSILON = 0.001;
 
 export const DistanceChecker = (entities: any, infoObj: any) => {
   if (!entities || !entities?.player) {

@@ -11,7 +11,7 @@ const windowHeight = Dimensions.get('window').height;
 
 class PlayerRenderer extends PureComponent {
   render() {
-    if (!this.props.position || !this.props.color) {
+    if (!this.props.position || !this.props.color || !this.props.x || !this.props.y) {
       return;
     }
     const vertices = [vec(-7, -17), vec(0, -24), vec(7, -17)];
@@ -26,9 +26,9 @@ class PlayerRenderer extends PureComponent {
             { translateY: windowHeight / 2 },
             { rotate: degreesToRadians(rotationAngle) },
           ]}>
-          <Vertices vertices={vertices} colors={colors} />
+          {/*<Vertices vertices={vertices} colors={colors} />*/}
         </Group>
-        <Circle r={RADIUS} cx={windowWidth / 2} cy={windowHeight / 2} color={this.props.color} />
+        <Circle r={RADIUS} cx={this.props.x} cy={this.props.y} color={this.props.color} />
       </Group>
     );
   }

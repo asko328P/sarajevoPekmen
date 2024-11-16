@@ -1,106 +1,55 @@
-import { Dimensions, Text, View } from 'react-native';
-//@ts-ignore
-import { GameEngine } from 'react-native-game-engine-skia';
-import { LineOnScreen } from '~/game/systems/LineOnScreen';
-import { MovePlayer } from '~/game/systems/MovePlayer';
-import { PlayerControl } from '~/game/systems/PlayerControl';
-import { useEffect, useRef, useState } from 'react';
-import { getConvertedMapData, getMapData } from '~/services/overpassApi';
-import { generateCumulativeEntities, generatePlayerEntityFromMapData } from '~/game/entities/entitiesGenerators';
-import { DistanceChecker } from '~/game/systems/DistanceChecker';
+import { Button, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
+import SkiaScrollPicker from '~/components/SkiaScrollPicker/SkiaScrollPicker';
+import SkiaScrollPicker2 from '~/components/SkiaScrollPicker2/SkiaScrollPicker2';
+import AnimatedNumberTicker from '~/components/AnimatedNumberTicker/AnimatedNumberTicker';
+import { useState } from 'react';
 
-const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
+export default function Page() {
+  const router = useRouter();
 
-type Event = {
-  type: 'newPosition';
-  newPosition?: number[];
-  playerEntity?: any;
-};
-export default function Home() {
-  const gameEngineRef = useRef<GameEngine>(null);
-  const [position, setPosition] = useState([43.859029, 18.4340605]);
-  // const isAlreadyFetchingData = useRef(false);
-  const [isFetchingData, setIsFetchingData] = useState(false);
+  const [animatedNumber, setAnimatedNumber] = useState(7);
 
-  useEffect(() => {
-    const generateMapData = async () => {
-      console.log('generating map data');
-      gameEngineRef.current?.stop();
-      const mapEntities = await getConvertedMapData(position[0], position[1]);
-      const cumulativeEntities = generateCumulativeEntities(mapEntities);
-      const playerEntity = generatePlayerEntityFromMapData(mapEntities, position[0], position[1]);
-      gameEngineRef.current?.start();
-
-      gameEngineRef.current?.swap({
-        ...cumulativeEntities,
-        ...playerEntity,
-      });
-    };
-
-    generateMapData();
-  }, []);
-
-  const onEventCallback = async (event: Event) => {
-    switch (event.type) {
-      case 'newPosition':
-        // gameEngineRef.current?.stop();
-        if (!event.newPosition) {
-          break;
-        }
-        if (isFetchingData) {
-          break;
-        }
-        setIsFetchingData(true);
-        console.log('fetching new position');
-        const mapEntities = await getConvertedMapData(event.newPosition[0], event.newPosition[1]);
-        const cumulativeEntities = generateCumulativeEntities(mapEntities);
-
-        const playerEntityObject: { [key: string]: any } = {};
-        playerEntityObject['player'] = event.playerEntity;
-
-        gameEngineRef?.current?.swap({
-          ...cumulativeEntities,
-          ...playerEntityObject,
-        });
-        // isAlreadyFetchingData.current = false;
-        setIsFetchingData(false);
-        // gameEngineRef.current?.start();
-        break;
-    }
+  const navigateToGameScreen = () => {
+    router.push('/gameScreen');
   };
+  const callbackHandler = (value: number) => {
+    setAnimatedNumber(value);
+  };
+
   return (
-    <View style={styles.container}>
-      <GameEngine
-        ref={gameEngineRef}
-        style={styles.gameEngine}
-        onEvent={onEventCallback}
-        systems={[LineOnScreen(windowWidth, windowHeight), MovePlayer, PlayerControl(windowWidth, windowHeight), DistanceChecker]}
-        entities={{}}
-      />
-      {isFetchingData && (
-        <View style={styles.textHolder}>
-          <Text style={styles.fetchingText}>{'Fetching map data.'}</Text>
+    <SafeAreaView style={styles.container}>
+      <Text>{'Customization screen'}</Text>
+      <Button onPress={navigateToGameScreen} title={'go to game screen'} />
+      <View
+        style={{
+          marginTop: 100,
+          gap: 30,
+        }}>
+        <SkiaScrollPicker width={200} numberOfLines={30} lineWidth={2} spacing={10} />
+        <SkiaScrollPicker2 width={200} height={50} numberOfLines={30} lineWidth={4} spacing={10} />
+        <View style={{ width: '30%' }}>
+          <AnimatedNumberTicker
+            fontSize={50}
+            digits={animatedNumber}
+            sensitivity={10}
+            valueCallBack={callbackHandler}
+            maxValue={1000}
+          />
         </View>
-      )}
-    </View>
+        <Button title={'increase'} onPress={() => setAnimatedNumber((prev) => prev + 1)} />
+        <Button title={'decrease'} onPress={() => setAnimatedNumber((prev) => prev - 1)} />
+      </View>
+    </SafeAreaView>
   );
 }
 
-const styles = {
-  fetchingText: {
-    color: 'white',
-    paddingBottom: 200,
-  },
-  textHolder: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-  },
-  gameEngine: {
-    position: 'absolute',
-  },
+const styles = StyleSheet.create({
   container: {
     flex: 1,
+    // backgroundColor: '#616161',
+    backgroundColor: '#000000',
+    // backgroundColor: '#FFFFFF',
   },
-};
+});

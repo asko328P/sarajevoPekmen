@@ -2,7 +2,7 @@ import osmtogeojson from 'osmtogeojson';
 
 import { degreesToRadians, radiansToDegrees } from '~/utility/geometry';
 
-export const DELTA = 0.013;
+export const DELTA = 0.01;
 
 const fetchMapData = (lat: number, long: number, delta = DELTA) => {
   const latMin = lat - delta / 2;
