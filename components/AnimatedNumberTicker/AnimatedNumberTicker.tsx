@@ -1,24 +1,6 @@
 import { ScrollView, StyleSheet, Text, View, VirtualizedList } from 'react-native';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import Animated, {
-  BounceInRight,
-  FadeInDown,
-  FadeInLeft,
-  FadeInRight,
-  FadeInUp,
-  FadeOut,
-  FadeOutDown,
-  FadeOutUp,
-  FlipInXDown,
-  FlipInXUp,
-  LinearTransition,
-  PinwheelIn,
-  useAnimatedRef,
-  useAnimatedScrollHandler,
-  useScrollViewOffset,
-  useSharedValue,
-  ZoomOut,
-} from 'react-native-reanimated';
+import Animated, { FadeInLeft, FadeOutLeft, FlipInXDown, FlipInXUp, LinearTransition, ZoomOut } from 'react-native-reanimated';
 
 type AnimatedDigit = {
   value: string;
@@ -89,31 +71,32 @@ const AnimatedNumberTicker = ({ digits, fontSize = 30, valueCallBack, sensitivit
     <View onLayout={onComponentLayout}>
       <View style={styles.container}>
         {memoizedDigits.map((digit, index) => (
-          <Animated.View
-            layout={LinearTransition}
-            key={`${digit.value}:${index}`}
-            entering={
-              digit.animationType === 'increasing'
-                ? FlipInXUp.duration(180)
-                : digit.animationType === 'decreasing'
-                  ? FlipInXDown.duration(180)
-                  : digit.animationType === 'constant'
-                    ? FadeInRight.duration(300)
-                    : undefined
-            }
-            exiting={
-              digit.animationType === 'increasing'
-                ? ZoomOut.duration(150)
-                : digit.animationType === 'decreasing'
+          <Animated.View key={`holder${memoizedDigits.length - index}`} layout={LinearTransition} style={styles.digitHolder}>
+            <Animated.View
+              layout={LinearTransition}
+              key={`${digit.value}:${index}`}
+              entering={
+                digit.animationType === 'increasing'
+                  ? FlipInXUp.duration(180)
+                  : digit.animationType === 'decreasing'
+                    ? FlipInXDown.duration(180)
+                    : digit.animationType === 'constant'
+                      ? FadeInLeft.duration(300)
+                      : undefined
+              }
+              exiting={
+                digit.animationType === 'increasing'
                   ? ZoomOut.duration(150)
-                  : digit.animationType === 'constant'
-                    ? PinwheelIn.duration(100)
-                    : undefined
-            }
-            style={styles.digitHolder}>
-            <Text adjustsFontSizeToFit style={[{ fontSize }, styles.text]}>
-              {digit.value}
-            </Text>
+                  : digit.animationType === 'decreasing'
+                    ? ZoomOut.duration(150)
+                    : digit.animationType === 'constant'
+                      ? FadeOutLeft.duration(200)
+                      : undefined
+              }>
+              <Text adjustsFontSizeToFit style={[{ fontSize }, styles.text]}>
+                {digit.value}
+              </Text>
+            </Animated.View>
           </Animated.View>
         ))}
         <Text

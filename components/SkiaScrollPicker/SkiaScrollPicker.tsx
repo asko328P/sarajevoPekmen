@@ -16,15 +16,16 @@ import { useMemo, useState } from 'react';
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 
 type Props = {
-  width: number;
   height?: number;
   maxValue?: number;
   spacing?: number;
   lineWidth?: number;
   numberOfLines?: number;
 };
-const SkiaScrollPicker = ({ width, height = 30, spacing = 5, lineWidth = 2, numberOfLines = 40 }: Props) => {
+const SkiaScrollPicker = ({ height = 30, spacing = 5, lineWidth = 2, numberOfLines = 40 }: Props) => {
+  const [componentWidth, setComponentWidth] = useState(0);
   const [scrollValue, setScrollValue] = useState<number>(0);
+
   const array = useMemo(() => {
     return Array.from(Array(numberOfLines).keys());
   }, [numberOfLines]);
@@ -37,11 +38,15 @@ const SkiaScrollPicker = ({ width, height = 30, spacing = 5, lineWidth = 2, numb
     return (scrollOffset.value / numberOfLines) * (spacing + lineWidth + 50);
   });
 
+  const onLayoutHandler = (e: any) => {
+    setComponentWidth(e.nativeEvent.layout.width);
+  };
+
   const scrollOffsetHandler = (e: any) => {
     setScrollValue(e.nativeEvent.contentOffset.x);
   };
   return (
-    <View>
+    <View onLayout={onLayoutHandler}>
       <Canvas style={[{ height }, styles.canvasHolder]}>
         <Group>
           {array.map((_, index) => (

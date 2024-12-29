@@ -16,14 +16,13 @@ import { useMemo, useState } from 'react';
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 
 type Props = {
-  width: number;
   height?: number;
   maxValue?: number;
   spacing?: number;
   lineWidth?: number;
   numberOfLines?: number;
 };
-const SkiaScrollPicker2 = ({ width, height = 30, spacing = 5, lineWidth = 2, numberOfLines = 40 }: Props) => {
+const SkiaScrollPicker2 = ({ height = 30, spacing = 5, lineWidth = 2, numberOfLines = 40 }: Props) => {
   const [scrollValue, setScrollValue] = useState<number>(0);
   const [componentWidth, setComponentWidth] = useState(0);
 
