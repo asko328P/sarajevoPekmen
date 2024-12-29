@@ -49,7 +49,7 @@ export default function Home() {
       const mapEntities = await getConvertedMapData(position[0], position[1]);
       const cumulativeEntities = generateCumulativeEntities(mapEntities);
       const playerEntity = generatePlayerEntityFromMapData(mapEntities, position[0], position[1]);
-      const otherPlayerEntity = generateGhostEntityFromMapData(mapEntities, 43.859029, 18.4340605);
+      const otherPlayerEntity = generateGhostEntityFromMapData(mapEntities, 43.859029, 18.4345605);
       gameEngineRef.current?.start();
 
       gameEngineRef.current?.swap({

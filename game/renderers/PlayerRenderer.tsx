@@ -1,6 +1,6 @@
 //@ts-nocheck
 import { PureComponent } from 'react';
-import { Circle, Group, vec, Vertices } from '@shopify/react-native-skia';
+import { Circle, Group, Text, vec, Vertices } from '@shopify/react-native-skia';
 import { Dimensions } from 'react-native';
 import { degreesToRadians } from '~/utility/geometry';
 
@@ -27,6 +27,7 @@ class PlayerRenderer extends PureComponent {
             { rotate: degreesToRadians(rotationAngle) },
           ]}>
           <Vertices vertices={vertices} colors={colors} />
+          <Text x={0} y={23} text={`${Number(this.props.desiredMovementAngle).toFixed(2)}`} color={'white'} />
         </Group>
         <Circle r={RADIUS} cx={windowWidth / 2} cy={windowHeight / 2} color={this.props.color} />
       </Group>

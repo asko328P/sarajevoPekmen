@@ -40,7 +40,7 @@ const MovePlayer = (entities: any, infoObj: any) => {
         if (entities[nextPosition.toString()] === undefined) {
           // console.log('No valids, returning');
           entityValue.nextPosition = previousPosition;
-          return entities;
+          continue;
         }
         let pointClosestToDesiredAngle = entities[nextPosition.toString()].connectedPoints.values().next().value;
         let closestToDesiredAngle = 360;
@@ -61,7 +61,7 @@ const MovePlayer = (entities: any, infoObj: any) => {
         entityValue.position = nextPosition;
         entityValue.nextPosition = pointClosestToDesiredAngle;
 
-        return entities;
+        continue;
       }
       //continue moving the entity along the line
       entityValue.position = [
