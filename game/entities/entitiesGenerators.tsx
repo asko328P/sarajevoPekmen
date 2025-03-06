@@ -82,10 +82,39 @@ const findWayWithNearestPoint = (mapData: ReadyLines, lat: number, long: number)
   return nearestWay;
 };
 
+export const generateGhostEntity = (
+  nextPosition: [number, number],
+  position: [number, number],
+  previousPosition: [number, number],
+  entityName: string,
+  desiredMovementAngle: number,
+  zoomLevel = 180000,
+  playerSpeed = 4 / 10000000,
+  color = '#fd3a3a'
+) => {
+  const playerEntityObject: { [key: string]: any } = {};
+
+  playerEntityObject[entityName] = {
+    nextPosition,
+    position,
+    previousPosition,
+    desiredMovementAngle,
+    zoomLevel,
+    playerSpeed,
+    startingPosition: position,
+    color,
+    x: 56,
+    y: 56,
+    renderer: <GhostRenderer />,
+  };
+  return playerEntityObject;
+};
+
 export const generateGhostEntityFromMapData = (
   mapData: ReadyLines,
   lat: number,
   long: number,
+  entityName = 'ghost',
   desiredMovementAngle = 62,
   zoomLevel = 180000,
   playerSpeed = 3 / 10000000,
@@ -118,9 +147,7 @@ export const generateGhostEntityFromMapData = (
       nextPosition = nearestWay[indexOfPointInNearestWay + 1];
     }
   }
-
-  playerEntityObject['ghost'] = {
-    isGhostEntity: true,
+  playerEntityObject[entityName] = {
     nextPosition,
     position,
     previousPosition,
@@ -143,7 +170,8 @@ export const generatePlayerEntityFromMapData = (
   desiredMovementAngle = 62,
   zoomLevel = 180000,
   playerSpeed = 4 / 10000000,
-  color = '#f4e60b'
+  color = '#f4e60b',
+  entityName = 'player'
 ) => {
   const playerEntityObject: { [key: string]: any } = {};
 
@@ -173,7 +201,7 @@ export const generatePlayerEntityFromMapData = (
     }
   }
 
-  playerEntityObject['player'] = {
+  playerEntityObject[entityName] = {
     nextPosition,
     position,
     previousPosition,

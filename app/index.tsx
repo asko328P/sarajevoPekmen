@@ -1,4 +1,4 @@
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link, useRouter } from 'expo-router';
 import SkiaScrollPicker from '~/components/SkiaScrollPicker/SkiaScrollPicker';
@@ -11,9 +11,10 @@ export default function Page() {
   const router = useRouter();
 
   const [animatedNumber, setAnimatedNumber] = useState(9996);
+  const [gameRoomName, setGameRoomName] = useState('default');
 
   const navigateToGameScreen = () => {
-    router.push('/gameScreen');
+    router.push({ pathname: '/gameScreen', params: { gameRoomName } });
   };
   const navigateShowCase = () => {
     router.push('/showcase/');
@@ -28,7 +29,26 @@ export default function Page() {
       {/*<Link style={styles.link} href={'/showcase/'}>*/}
       {/*  {'Showcase'}*/}
       {/*</Link>*/}
-      <Button color={'#1e9aff'} onPress={navigateToGameScreen} title={'go to game screen'} />
+      <View style={styles.gameButtonHolder}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <Text>{'Room name: '}</Text>
+          <TextInput
+            style={{
+              color: '#ed5400',
+              fontWeight: '600',
+              fontSize: 18,
+              backgroundColor: 'white',
+              padding: 4,
+              borderRadius: 3,
+            }}
+            placeholder={'Room name'}
+            value={gameRoomName}
+            onChangeText={setGameRoomName}
+          />
+        </View>
+
+        <Button color={'#1e9aff'} onPress={navigateToGameScreen} title={'go to game screen'} />
+      </View>
       <Button color={'#1e9aff'} onPress={navigateShowCase} title={'go to showcase'} />
       {/*<View*/}
       {/*  style={{*/}
@@ -55,6 +75,12 @@ export default function Page() {
 }
 
 const styles = StyleSheet.create({
+  gameButtonHolder: {
+    padding: 16,
+    backgroundColor: '#e1e1e1',
+    borderRadius: 20,
+    margin: 16,
+  },
   link: {
     color: '#ffffff',
   },
