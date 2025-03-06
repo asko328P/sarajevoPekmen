@@ -88,9 +88,9 @@ export const generateGhostEntity = (
   previousPosition: [number, number],
   entityName: string,
   desiredMovementAngle: number,
+  color = '#fd3a3a',
   zoomLevel = 180000,
-  playerSpeed = 4 / 10000000,
-  color = '#fd3a3a'
+  playerSpeed = 4 / 10000000
 ) => {
   const playerEntityObject: { [key: string]: any } = {};
 
@@ -116,9 +116,9 @@ export const generateGhostEntityFromMapData = (
   long: number,
   entityName = 'ghost',
   desiredMovementAngle = 62,
+  color = '#fd3a3a',
   zoomLevel = 180000,
-  playerSpeed = 3 / 10000000,
-  color = '#fd3a3a'
+  playerSpeed = 3 / 10000000
 ) => {
   const playerEntityObject: { [key: string]: any } = {};
 
@@ -167,10 +167,10 @@ export const generatePlayerEntityFromMapData = (
   mapData: ReadyLines,
   lat: number,
   long: number,
+  color = '#f4e60b',
   desiredMovementAngle = 62,
   zoomLevel = 180000,
   playerSpeed = 4 / 10000000,
-  color = '#f4e60b',
   entityName = 'player'
 ) => {
   const playerEntityObject: { [key: string]: any } = {};

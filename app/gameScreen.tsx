@@ -37,11 +37,11 @@ const supabaseClient = createClient(supabaseUrl!, supabaseAnonKey!);
 
 export default function Home() {
   const gameEngineRef = useRef<GameEngine>(null);
-  const { gameRoomName } = useLocalSearchParams<{ gameRoomName: string }>();
+  const { gameRoomName, playerColor } = useLocalSearchParams<{ gameRoomName: string; playerColor?: string }>();
 
   const [position, setPosition] = useState([43.859029, 18.4340605]);
   const [isFetchingData, setIsFetchingData] = useState(false);
-  const [entityNames, setEntityNames] = useState<string[]>(['player', 'ghost']);
+  const [entityNames, setEntityNames] = useState<string[]>(['player']);
   const [randomName, setRandomName] = useState<string>(generateRandomString());
 
   const userStatus = {
@@ -62,7 +62,7 @@ export default function Home() {
       gameEngineRef.current?.stop();
       const mapEntities = await getConvertedMapData(position[0], position[1]);
       const cumulativeEntities = generateCumulativeEntities(mapEntities);
-      const playerEntity = generatePlayerEntityFromMapData(mapEntities, position[0], position[1]);
+      const playerEntity = generatePlayerEntityFromMapData(mapEntities, position[0], position[1], playerColor);
       const otherPlayerEntity = generateGhostEntityFromMapData(mapEntities, 43.859029, 18.4345605);
 
       gameEngineRef.current?.swap({
@@ -78,11 +78,11 @@ export default function Home() {
         .on('broadcast', { event: 'reportPosition' }, ({ payload }) => {
           const { name } = payload;
           if (name === randomName) return;
-          const { nextPosition, position, previousPosition, desiredMovementAngle } = payload.entity;
+          const { nextPosition, position, previousPosition, desiredMovementAngle, color } = payload.entity;
           setEntityNames((prevState) => [...prevState, name]);
           gameEngineRef.current?.dispatch({
             type: 'injectEntity',
-            entity: generateGhostEntity(nextPosition, position, previousPosition, name, desiredMovementAngle),
+            entity: generateGhostEntity(nextPosition, position, previousPosition, name, desiredMovementAngle, color),
           });
         })
         .on('presence', { event: 'sync' }, () => {
@@ -123,17 +123,19 @@ export default function Home() {
           const mapEntities = await getConvertedMapData(event.newPosition[0], event.newPosition[1]);
           const cumulativeMapEntities = generateCumulativeEntities(mapEntities);
 
-          // const playerEntityObject: { [key: string]: any } = {};
-          // playerEntityObject['player'] = event.playerEntity;
-
+          const playerEntityObject: { [key: string]: any } = {};
+          playerEntityObject['player'] = event.playerEntity;
+          //
           //copy the entities which need to be carried over (i.e. everything that is not map data)
           let tempObj: any = {};
           entityNames.forEach((name: string) => {
             tempObj[name] = { ...event.entities[name] };
           });
+          // console.log(tempObj);
           gameEngineRef?.current?.swap({
             ...cumulativeMapEntities,
             ...tempObj,
+            // ...playerEntityObject,
           });
           setIsFetchingData(false);
           break;
@@ -155,7 +157,7 @@ export default function Home() {
           PlayerControl(windowWidth, windowHeight),
           DistanceChecker,
           // GhostDesiredAngle,
-          ReportPosition,
+          // ReportPosition,
         ]}
         entities={{}}
       />

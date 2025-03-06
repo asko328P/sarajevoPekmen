@@ -16,7 +16,7 @@ export const DistanceChecker = (entities: any, infoObj: any) => {
     latRadian = Math.acos((2 * Math.pow(Math.E, latRadian)) / (Math.pow(Math.E, 2 * latRadian) + 1));
     let latDegree = radiansToDegrees(latRadian);
 
-    infoObj.dispatch({ type: 'newPosition', newPosition: [latDegree, position[0]], playerEntity });
+    infoObj.dispatch({ type: 'newPosition', newPosition: [latDegree, position[0]], playerEntity, entities });
   }
 
   return entities;

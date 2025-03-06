@@ -1,4 +1,4 @@
-import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Button, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link, useRouter } from 'expo-router';
 import SkiaScrollPicker from '~/components/SkiaScrollPicker/SkiaScrollPicker';
@@ -6,15 +6,17 @@ import SkiaScrollPicker2 from '~/components/SkiaScrollPicker2/SkiaScrollPicker2'
 import AnimatedNumberTicker from '~/components/AnimatedNumberTicker/AnimatedNumberTicker';
 import { useState } from 'react';
 import SquishButton from '~/components/SquishButton/SquishButton';
+import { getRandomColor } from '~/utility/utility';
 
 export default function Page() {
   const router = useRouter();
 
   const [animatedNumber, setAnimatedNumber] = useState(9996);
   const [gameRoomName, setGameRoomName] = useState('default');
+  const [randomColor, setRandomColor] = useState(getRandomColor());
 
   const navigateToGameScreen = () => {
-    router.push({ pathname: '/gameScreen', params: { gameRoomName } });
+    router.push({ pathname: '/gameScreen', params: { gameRoomName, playerColor: randomColor } });
   };
   const navigateShowCase = () => {
     router.push('/showcase/');
@@ -30,7 +32,12 @@ export default function Page() {
       {/*  {'Showcase'}*/}
       {/*</Link>*/}
       <View style={styles.gameButtonHolder}>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 10,
+          }}>
           <Text>{'Room name: '}</Text>
           <TextInput
             style={{
@@ -44,6 +51,20 @@ export default function Page() {
             placeholder={'Room name'}
             value={gameRoomName}
             onChangeText={setGameRoomName}
+          />
+          <Text>{'Player color: '}</Text>
+          <TouchableOpacity
+            onPress={() => {
+              setRandomColor(getRandomColor());
+            }}
+            style={{
+              borderWidth: StyleSheet.hairlineWidth,
+              borderColor: '#888888',
+              width: 30,
+              height: 20,
+              borderRadius: 5,
+              backgroundColor: randomColor,
+            }}
           />
         </View>
 
