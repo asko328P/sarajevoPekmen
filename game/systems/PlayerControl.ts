@@ -6,7 +6,7 @@ const PlayerControl = (windowWidth: number, windowHeight: number) => (entities: 
   }
   const playerEntity = entities['player'];
   const { touches } = infoObj;
-  if (touches[0]?.event?.locationX && touches[0].event?.locationY) {
+  if (touches[0]?.event?.locationX && touches[0].event?.locationY && touches[0]?.type === 'start') {
     playerEntity.desiredMovementAngle = calcAngleDegrees(
       -(windowWidth / 2 - touches[0]?.event?.locationX),
       windowHeight / 2 - touches[0]?.event?.locationY

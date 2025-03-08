@@ -168,7 +168,7 @@ export const generatePlayerEntityFromMapData = (
   lat: number,
   long: number,
   color = '#f4e60b',
-  desiredMovementAngle = 62,
+  desiredMovementAngle = 90,
   zoomLevel = 180000,
   playerSpeed = 4 / 10000000,
   entityName = 'player'

@@ -15,9 +15,8 @@ import {
 import { DistanceChecker } from '~/game/systems/DistanceChecker';
 import { createClient } from '@supabase/supabase-js';
 import { GhostOnScreen } from '~/game/systems/GhostOnScreen';
-import { GhostDesiredAngle } from '~/game/systems/GhostDesiredAngle';
 import { generateRandomString } from '~/utility/utility';
-import { AddPlayer } from '~/game/systems/AddPlayer';
+import { AddRemovePlayer } from '~/game/systems/AddRemovePlayer';
 import { useLocalSearchParams } from 'expo-router';
 import { ReportPosition } from '~/game/systems/ReportPosition';
 
@@ -30,6 +29,7 @@ type Event = {
   playerEntity?: any;
   entities?: any;
 };
+const PING_CHECK_INTERVAL = 3000;
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
@@ -42,7 +42,9 @@ export default function Home() {
   const [position, setPosition] = useState([43.859029, 18.4340605]);
   const [isFetchingData, setIsFetchingData] = useState(false);
   const [entityNames, setEntityNames] = useState<string[]>(['player']);
+  const [presenceState, setPresenceState] = useState<{ [key: string]: any }>({});
   const [randomName, setRandomName] = useState<string>(generateRandomString());
+  const [latency, setLatency] = useState(0);
 
   const userStatus = {
     entityName: randomName,
@@ -52,6 +54,9 @@ export default function Home() {
     config: {
       presence: {
         key: randomName,
+      },
+      broadcast: {
+        ack: true,
       },
     },
   });
@@ -87,7 +92,32 @@ export default function Home() {
         })
         .on('presence', { event: 'sync' }, () => {
           const newState = pekChannel.presenceState();
-          console.log('presences: ', newState);
+          // console.log('presences: ', newState, 'my random: ', randomName);
+          // setPresenceState((prevState) => {
+          //   console.log('PREV STATE: ', Object.keys(prevState));
+          //   console.log('NEW STATE', Object.keys(newState));
+          //   Object.keys(prevState).forEach((oldEntityName) => {
+          //     if (!newState[oldEntityName]) {
+          //       console.log('deleting sumn');
+          //       gameEngineRef?.current?.dispatch({
+          //         type: 'deleteEntity',
+          //         entityName: oldEntityName,
+          //       });
+          //     }
+          //   });
+          //   return newState;
+          // });
+          setEntityNames(['player', ...Object.keys(newState)]);
+          gameEngineRef.current?.dispatch({
+            type: 'gameEngineReportPosition',
+          });
+        })
+        .on('presence', { event: 'leave' }, ({ key, leftPresences }) => {
+          console.log('leave', key, leftPresences);
+          gameEngineRef?.current?.dispatch({
+            type: 'deleteEntity',
+            entityName: key,
+          });
         })
         .subscribe(async (status) => {
           if (status !== 'SUBSCRIBED') {
@@ -95,17 +125,51 @@ export default function Home() {
           }
           await pekChannel.track(userStatus);
         });
+      // await pekChannel.send({
+      //   type: 'broadcast',
+      //   event: 'reportPosition',
+      //   payload: { entity: playerEntity.player, name: randomName },
+      // });
       gameEngineRef.current?.start();
     };
 
+    const pingCheckInterval = setInterval(async () => {
+      const pingTime = new Date().getTime();
+      const response = await pekChannel?.send({
+        type: 'broadcast',
+        event: 'ping',
+        payload: { pingTime },
+      });
+      const pongTime = new Date().getTime();
+      setLatency(pongTime - pingTime);
+    }, PING_CHECK_INTERVAL);
+
     generateMapData();
+
+    return () => {
+      clearInterval(pingCheckInterval);
+      pekChannel.untrack();
+    };
   }, []);
+
+  useEffect(() => {
+    // console.log('entityNames', entityNames, 'newState', presenceState);
+    // entityNames.forEach((entityName) => {
+    //   if (entityName === 'player') return;
+    //   if (!newState[entityName]) {
+    //     console.log('deleting');
+    //     gameEngineRef.current?.dispatch({
+    //       type: 'deleteEntity',
+    //       entityName: entityName,
+    //     });
+    //   }
+    // });
+  }, [entityNames, presenceState]);
 
   const onGameEngineEventCallback = useCallback(
     async (event: Event) => {
       switch (event.type) {
         case 'reportPositionToOtherPlayers':
-          const { nextPosition, position, previousPosition, desiredMovementAngle } = event.playerEntity;
           pekChannel.send({
             type: 'broadcast',
             event: 'reportPosition',
@@ -150,36 +214,64 @@ export default function Home() {
         style={styles.gameEngine}
         onEvent={onGameEngineEventCallback}
         systems={[
-          AddPlayer,
+          AddRemovePlayer,
           LineOnScreen(windowWidth, windowHeight),
           GhostOnScreen(windowWidth, windowHeight),
           MovePlayer,
           PlayerControl(windowWidth, windowHeight),
           DistanceChecker,
           // GhostDesiredAngle,
-          // ReportPosition,
+          ReportPosition,
         ]}
         entities={{}}
       />
       {isFetchingData && (
         //@ts-ignore
-        <View pointerEvents={'none'} style={styles.textHolder}>
+        <View pointerEvents={'none'} style={styles.fetchingHolder}>
           <Text style={styles.fetchingText}>{'Fetching map data.'}</Text>
         </View>
       )}
+      {latency !== 0 && (
+        //@ts-ignore
+        <View pointerEvents={'none'} style={styles.latencyHolder}>
+          <Text style={styles.fetchingText}>{`latency: ${latency} ms`}</Text>
+        </View>
+      )}
+      {/*{0 && (*/}
+      {/*  //@ts-ignore*/}
+      {/*  <View pointerEvents={'none'} style={styles.latencyHolder}>*/}
+      {/*    <Text style={styles.fetchingText}>{`latency: ${1} ms`}</Text>*/}
+      {/*  </View>*/}
+      {/*)}*/}
     </View>
   );
 }
 
 const styles = {
+  fetchingHolder: {
+    position: 'absolute',
+    alignItems: 'flex-start',
+    justifyContent: 'flex-end',
+    width: '100%',
+    height: '100%',
+    padding: 20,
+  },
+  latencyHolder: {
+    position: 'absolute',
+    alignItems: 'flex-end',
+    justifyContent: 'flex-end',
+    width: '100%',
+    height: '100%',
+    padding: 20,
+  },
   fetchingText: {
     color: 'white',
-    paddingBottom: 200,
   },
-  textHolder: {
+  centerText: {
+    position: 'absolute',
     alignItems: 'center',
     justifyContent: 'center',
-    flex: 1,
+    // flex: 1,
   },
   gameEngine: {
     position: 'absolute',
