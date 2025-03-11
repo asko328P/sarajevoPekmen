@@ -42,7 +42,6 @@ export default function Home() {
   const [position, setPosition] = useState([43.859029, 18.4340605]);
   const [isFetchingData, setIsFetchingData] = useState(false);
   const [entityNames, setEntityNames] = useState<string[]>(['player']);
-  const [presenceState, setPresenceState] = useState<{ [key: string]: any }>({});
   const [randomName, setRandomName] = useState<string>(generateRandomString());
   const [latency, setLatency] = useState(0);
 
@@ -68,18 +67,13 @@ export default function Home() {
       const mapEntities = await getConvertedMapData(position[0], position[1]);
       const cumulativeEntities = generateCumulativeEntities(mapEntities);
       const playerEntity = generatePlayerEntityFromMapData(mapEntities, position[0], position[1], playerColor);
-      const otherPlayerEntity = generateGhostEntityFromMapData(mapEntities, 43.859029, 18.4345605);
 
       gameEngineRef.current?.swap({
         ...cumulativeEntities,
         ...playerEntity,
-        // ...otherPlayerEntity,
       });
 
       pekChannel
-        // .on('broadcast', { event: 'someEvent' }, ({ payload }) => {
-        //   console.log(payload);
-        // })
         .on('broadcast', { event: 'reportPosition' }, ({ payload }) => {
           const { name } = payload;
           if (name === randomName) return;
@@ -92,21 +86,6 @@ export default function Home() {
         })
         .on('presence', { event: 'sync' }, () => {
           const newState = pekChannel.presenceState();
-          // console.log('presences: ', newState, 'my random: ', randomName);
-          // setPresenceState((prevState) => {
-          //   console.log('PREV STATE: ', Object.keys(prevState));
-          //   console.log('NEW STATE', Object.keys(newState));
-          //   Object.keys(prevState).forEach((oldEntityName) => {
-          //     if (!newState[oldEntityName]) {
-          //       console.log('deleting sumn');
-          //       gameEngineRef?.current?.dispatch({
-          //         type: 'deleteEntity',
-          //         entityName: oldEntityName,
-          //       });
-          //     }
-          //   });
-          //   return newState;
-          // });
           setEntityNames(['player', ...Object.keys(newState)]);
           gameEngineRef.current?.dispatch({
             type: 'gameEngineReportPosition',
@@ -125,11 +104,6 @@ export default function Home() {
           }
           await pekChannel.track(userStatus);
         });
-      // await pekChannel.send({
-      //   type: 'broadcast',
-      //   event: 'reportPosition',
-      //   payload: { entity: playerEntity.player, name: randomName },
-      // });
       gameEngineRef.current?.start();
     };
 
@@ -151,20 +125,6 @@ export default function Home() {
       pekChannel.untrack();
     };
   }, []);
-
-  useEffect(() => {
-    // console.log('entityNames', entityNames, 'newState', presenceState);
-    // entityNames.forEach((entityName) => {
-    //   if (entityName === 'player') return;
-    //   if (!newState[entityName]) {
-    //     console.log('deleting');
-    //     gameEngineRef.current?.dispatch({
-    //       type: 'deleteEntity',
-    //       entityName: entityName,
-    //     });
-    //   }
-    // });
-  }, [entityNames, presenceState]);
 
   const onGameEngineEventCallback = useCallback(
     async (event: Event) => {
@@ -195,11 +155,9 @@ export default function Home() {
           entityNames.forEach((name: string) => {
             tempObj[name] = { ...event.entities[name] };
           });
-          // console.log(tempObj);
           gameEngineRef?.current?.swap({
             ...cumulativeMapEntities,
             ...tempObj,
-            // ...playerEntityObject,
           });
           setIsFetchingData(false);
           break;
@@ -220,7 +178,6 @@ export default function Home() {
           MovePlayer,
           PlayerControl(windowWidth, windowHeight),
           DistanceChecker,
-          // GhostDesiredAngle,
           ReportPosition,
         ]}
         entities={{}}
@@ -237,12 +194,6 @@ export default function Home() {
           <Text style={styles.fetchingText}>{`latency: ${latency} ms`}</Text>
         </View>
       )}
-      {/*{0 && (*/}
-      {/*  //@ts-ignore*/}
-      {/*  <View pointerEvents={'none'} style={styles.latencyHolder}>*/}
-      {/*    <Text style={styles.fetchingText}>{`latency: ${1} ms`}</Text>*/}
-      {/*  </View>*/}
-      {/*)}*/}
     </View>
   );
 }
