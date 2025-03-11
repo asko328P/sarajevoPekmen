@@ -2,7 +2,8 @@ import osmtogeojson from 'osmtogeojson';
 
 import { degreesToRadians, radiansToDegrees } from '~/utility/geometry';
 
-export const DELTA = 0.013;
+export const DELTA = 0.01;
+const OVERPASS_BASE_URL = 'https://overpass.private.coffee/api/interpreter';
 
 const fetchMapData = (lat: number, long: number, delta = DELTA) => {
   const latMin = lat - delta / 2;
@@ -30,7 +31,7 @@ out geom;`,
   };
 
   return new Promise((resolve, reject) => {
-    fetch('https://overpass-api.de/api/interpreter', options)
+    fetch(OVERPASS_BASE_URL, options)
       .then((response) => response.json())
       .then((response) => {
         resolve(response);

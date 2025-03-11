@@ -2,6 +2,7 @@ import { ReadyLines, Way } from '~/services/overpassApi';
 import MapRenderer from '~/game/renderers/MapRenderer';
 import PlayerRenderer from '~/game/renderers/PlayerRenderer';
 import { degreesToRadians, getDistance, radiansToDegrees } from '~/utility/geometry';
+import GhostRenderer from '~/game/renderers/GhostRenderer';
 
 const generateMapEntities = (mapData: ReadyLines) => {
   const mapEntities: { [key: string]: any } = {};
@@ -81,11 +82,41 @@ const findWayWithNearestPoint = (mapData: ReadyLines, lat: number, long: number)
   return nearestWay;
 };
 
-export const generatePlayerEntityFromMapData = (
+export const generateGhostEntity = (
+  nextPosition: [number, number],
+  position: [number, number],
+  previousPosition: [number, number],
+  entityName: string,
+  desiredMovementAngle: number,
+  color = '#fd3a3a',
+  zoomLevel = 180000,
+  playerSpeed = 4 / 10000000
+) => {
+  const playerEntityObject: { [key: string]: any } = {};
+
+  playerEntityObject[entityName] = {
+    nextPosition,
+    position,
+    previousPosition,
+    desiredMovementAngle,
+    zoomLevel,
+    playerSpeed,
+    startingPosition: position,
+    color,
+    x: 56,
+    y: 56,
+    renderer: <GhostRenderer />,
+  };
+  return playerEntityObject;
+};
+
+export const generateGhostEntityFromMapData = (
   mapData: ReadyLines,
   lat: number,
   long: number,
+  entityName = 'ghost',
   desiredMovementAngle = 62,
+  color = '#fd3a3a',
   zoomLevel = 180000,
   playerSpeed = 3 / 10000000
 ) => {
@@ -116,8 +147,7 @@ export const generatePlayerEntityFromMapData = (
       nextPosition = nearestWay[indexOfPointInNearestWay + 1];
     }
   }
-
-  playerEntityObject['player'] = {
+  playerEntityObject[entityName] = {
     nextPosition,
     position,
     previousPosition,
@@ -125,6 +155,61 @@ export const generatePlayerEntityFromMapData = (
     zoomLevel,
     playerSpeed,
     startingPosition: position,
+    color,
+    x: 56,
+    y: 56,
+    renderer: <GhostRenderer />,
+  };
+  return playerEntityObject;
+};
+
+export const generatePlayerEntityFromMapData = (
+  mapData: ReadyLines,
+  lat: number,
+  long: number,
+  color = '#f4e60b',
+  desiredMovementAngle = 90,
+  zoomLevel = 180000,
+  playerSpeed = 4 / 10000000,
+  entityName = 'player'
+) => {
+  const playerEntityObject: { [key: string]: any } = {};
+
+  const phiRadians = degreesToRadians(lat);
+  const phiMercator = Math.log(Math.abs(1 / Math.cos(phiRadians) + Math.tan(phiRadians)));
+  const convertedLat = radiansToDegrees(phiMercator);
+
+  let nextPosition: number[];
+  let position: number[];
+  let previousPosition: number[];
+
+  const nearestWay = findWayWithNearestPoint(mapData, convertedLat, long);
+  const indexOfPointInNearestWay = findIndexOfNearestPointInWay(nearestWay, convertedLat, long);
+  if (indexOfPointInNearestWay === 0) {
+    position = nearestWay[0];
+    previousPosition = position;
+    nextPosition = nearestWay[1];
+  } else {
+    if (indexOfPointInNearestWay === nearestWay.length - 1) {
+      position = nearestWay[nearestWay.length - 1];
+      previousPosition = position;
+      nextPosition = nearestWay[nearestWay.length - 2];
+    } else {
+      position = nearestWay[indexOfPointInNearestWay];
+      previousPosition = position;
+      nextPosition = nearestWay[indexOfPointInNearestWay + 1];
+    }
+  }
+
+  playerEntityObject[entityName] = {
+    nextPosition,
+    position,
+    previousPosition,
+    desiredMovementAngle,
+    zoomLevel,
+    playerSpeed,
+    startingPosition: position,
+    color,
     renderer: <PlayerRenderer />,
   };
   return playerEntityObject;

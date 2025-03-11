@@ -1,7 +1,7 @@
 import { angleDifference, calcAngleDegrees, degreesToRadians, getDistance, radiansToDegrees } from '~/utility/geometry';
 import { DELTA } from '~/services/overpassApi';
 
-const EPSILON = 0.001;
+// const EPSILON = 0.001;
 
 export const DistanceChecker = (entities: any, infoObj: any) => {
   if (!entities || !entities?.player) {
@@ -16,7 +16,7 @@ export const DistanceChecker = (entities: any, infoObj: any) => {
     latRadian = Math.acos((2 * Math.pow(Math.E, latRadian)) / (Math.pow(Math.E, 2 * latRadian) + 1));
     let latDegree = radiansToDegrees(latRadian);
 
-    infoObj.dispatch({ type: 'newPosition', newPosition: [latDegree, position[0]], playerEntity });
+    infoObj.dispatch({ type: 'newPosition', newPosition: [latDegree, position[0]], playerEntity, entities });
   }
 
   return entities;

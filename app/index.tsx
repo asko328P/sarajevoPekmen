@@ -1,106 +1,80 @@
-import { Dimensions, Text, View } from 'react-native';
-//@ts-ignore
-import { GameEngine } from 'react-native-game-engine-skia';
-import { LineOnScreen } from '~/game/systems/LineOnScreen';
-import { MovePlayer } from '~/game/systems/MovePlayer';
-import { PlayerControl } from '~/game/systems/PlayerControl';
-import { useEffect, useRef, useState } from 'react';
-import { getConvertedMapData, getMapData } from '~/services/overpassApi';
-import { generateCumulativeEntities, generatePlayerEntityFromMapData } from '~/game/entities/entitiesGenerators';
-import { DistanceChecker } from '~/game/systems/DistanceChecker';
+import { useRouter } from 'expo-router';
+import { useState } from 'react';
+import { Button, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
+import { getRandomColor } from '~/utility/utility';
 
-type Event = {
-  type: 'newPosition';
-  newPosition?: number[];
-  playerEntity?: any;
-};
-export default function Home() {
-  const gameEngineRef = useRef<GameEngine>(null);
-  const [position, setPosition] = useState([43.859029, 18.4340605]);
-  // const isAlreadyFetchingData = useRef(false);
-  const [isFetchingData, setIsFetchingData] = useState(false);
+export default function Page() {
+  const router = useRouter();
 
-  useEffect(() => {
-    const generateMapData = async () => {
-      console.log('generating map data');
-      gameEngineRef.current?.stop();
-      const mapEntities = await getConvertedMapData(position[0], position[1]);
-      const cumulativeEntities = generateCumulativeEntities(mapEntities);
-      const playerEntity = generatePlayerEntityFromMapData(mapEntities, position[0], position[1]);
-      gameEngineRef.current?.start();
+  const [gameRoomName, setGameRoomName] = useState('default');
+  const [randomColor, setRandomColor] = useState(getRandomColor());
 
-      gameEngineRef.current?.swap({
-        ...cumulativeEntities,
-        ...playerEntity,
-      });
-    };
-
-    generateMapData();
-  }, []);
-
-  const onEventCallback = async (event: Event) => {
-    switch (event.type) {
-      case 'newPosition':
-        // gameEngineRef.current?.stop();
-        if (!event.newPosition) {
-          break;
-        }
-        if (isFetchingData) {
-          break;
-        }
-        setIsFetchingData(true);
-        console.log('fetching new position');
-        const mapEntities = await getConvertedMapData(event.newPosition[0], event.newPosition[1]);
-        const cumulativeEntities = generateCumulativeEntities(mapEntities);
-
-        const playerEntityObject: { [key: string]: any } = {};
-        playerEntityObject['player'] = event.playerEntity;
-
-        gameEngineRef?.current?.swap({
-          ...cumulativeEntities,
-          ...playerEntityObject,
-        });
-        // isAlreadyFetchingData.current = false;
-        setIsFetchingData(false);
-        // gameEngineRef.current?.start();
-        break;
-    }
+  const navigateToGameScreen = () => {
+    router.push({ pathname: '/gameScreen', params: { gameRoomName, playerColor: randomColor } });
   };
+  const navigateShowCase = () => {
+    router.push('/showcase/');
+  };
+
   return (
-    <View style={styles.container}>
-      <GameEngine
-        ref={gameEngineRef}
-        style={styles.gameEngine}
-        onEvent={onEventCallback}
-        systems={[LineOnScreen(windowWidth, windowHeight), MovePlayer, PlayerControl(windowWidth, windowHeight), DistanceChecker]}
-        entities={{}}
-      />
-      {isFetchingData && (
-        <View style={styles.textHolder}>
-          <Text style={styles.fetchingText}>{'Fetching map data.'}</Text>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.gameButtonHolder}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 10,
+          }}>
+          <Text>{'Room name: '}</Text>
+          <TextInput
+            style={{
+              color: '#ed5400',
+              fontWeight: '600',
+              fontSize: 18,
+              backgroundColor: 'white',
+              padding: 4,
+              borderRadius: 3,
+            }}
+            placeholder={'Room name'}
+            value={gameRoomName}
+            onChangeText={setGameRoomName}
+          />
+          <Text>{'Player color: '}</Text>
+          <TouchableOpacity
+            onPress={() => {
+              setRandomColor(getRandomColor());
+            }}
+            style={{
+              borderWidth: StyleSheet.hairlineWidth,
+              borderColor: '#888888',
+              width: 30,
+              height: 20,
+              borderRadius: 5,
+              backgroundColor: randomColor,
+            }}
+          />
         </View>
-      )}
-    </View>
+
+        <Button color={'#1e9aff'} onPress={navigateToGameScreen} title={'go to game screen'} />
+      </View>
+      <Button color={'#1e9aff'} onPress={navigateShowCase} title={'go to showcase'} />
+    </SafeAreaView>
   );
 }
 
-const styles = {
-  fetchingText: {
-    color: 'white',
-    paddingBottom: 200,
+const styles = StyleSheet.create({
+  gameButtonHolder: {
+    padding: 16,
+    backgroundColor: '#e1e1e1',
+    borderRadius: 20,
+    margin: 16,
   },
-  textHolder: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-  },
-  gameEngine: {
-    position: 'absolute',
+  link: {
+    color: '#ffffff',
   },
   container: {
     flex: 1,
   },
-};
+});

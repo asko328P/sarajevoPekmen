@@ -21,4 +21,20 @@ function getDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
   return Math.sqrt((lat1 - lat2) * (lat1 - lat2) + (lon1 - lon2) * (lon1 - lon2));
 }
 
-export { calcAngleDegrees, angleDifference, degreesToRadians, radiansToDegrees, getDistance };
+function latToMercator(lat: number) {
+  const phiRadians = degreesToRadians(lat);
+  const phiMercator = Math.log(Math.abs(1 / Math.cos(phiRadians) + Math.tan(phiRadians)));
+  const convertedLat = radiansToDegrees(phiMercator);
+  return convertedLat;
+}
+
+function angle(cx: number, cy: number, ex: number, ey: number) {
+  var dy = ey - cy;
+  var dx = ex - cx;
+  var theta = Math.atan2(dy, dx); // range (-PI, PI]
+  theta *= 180 / Math.PI; // rads to degs, range (-180, 180]
+  // if (theta < 0) theta = 360 + theta; // range [0, 360)
+  return theta;
+}
+
+export { calcAngleDegrees, angleDifference, degreesToRadians, radiansToDegrees, getDistance, latToMercator, angle };
