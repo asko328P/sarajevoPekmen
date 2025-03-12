@@ -1,9 +1,9 @@
 {
   "expo": {
-    "name": "sarajevoPekmen",
-    "slug": "sarajevoPekmen",
+    "name": "sarajevopekmen",
+    "slug": "sarajevopekmen",
     "version": "1.0.0",
-    "scheme": "sarajevoPekmen",
+    "scheme": "sarajevopekmen",
     "web": {
       "bundler": "metro",
       "output": "static",

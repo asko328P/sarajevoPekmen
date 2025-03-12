@@ -15,7 +15,7 @@ export default function Page() {
     router.push({ pathname: '/gameScreen', params: { gameRoomName, playerColor: randomColor } });
   };
   const navigateShowCase = () => {
-    router.push('/showcase/');
+    router.push('/showcase');
   };
 
   return (
