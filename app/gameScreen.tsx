@@ -37,9 +37,14 @@ const supabaseClient = createClient(supabaseUrl!, supabaseAnonKey!);
 
 export default function Home() {
   const gameEngineRef = useRef<GameEngine>(null);
-  const { gameRoomName, playerColor } = useLocalSearchParams<{ gameRoomName: string; playerColor?: string }>();
+  const { gameRoomName, playerColor, markerPositionLat, markerPositionLong } = useLocalSearchParams<{
+    gameRoomName: string;
+    playerColor?: string;
+    markerPositionLat: string;
+    markerPositionLong: string;
+  }>();
 
-  const [position, setPosition] = useState([43.859029, 18.4340605]);
+  const [position, setPosition] = useState([Number(markerPositionLat), Number(markerPositionLong)]);
   const [isFetchingData, setIsFetchingData] = useState(false);
   const [entityNames, setEntityNames] = useState<string[]>(['player']);
   const [randomName, setRandomName] = useState<string>(generateRandomString());
